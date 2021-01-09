@@ -36,6 +36,12 @@ class GithubUserDetailAPI(ListAPIView):
         current_CA = GithubUser.objects.filter(username=self.kwargs['username'])
         return current_CA
 
-class GithubPRAPI(CreateAPIView):
-    queryset = CollectedPR.objects.all()
-    serializer_class = CollectedPRSerializer
+class GithubPRAPI(APIView):
+
+    def post(self, request, format=None):
+        if(request.data['pr_by'] and request.data['url']):
+            profile = GithubUser.objects.filter(username=request.data['pr_by'])
+            if (not profile):
+                return Response({"error": "wrong data entered"}, status=status.HTTP_401_UNAUTHORIZED)
+            CollectedPR(url=request.data['url'],pr_by=profile[0]).save()
+            return Response({"status":"added url"}, status=status.HTTP_200_OK)

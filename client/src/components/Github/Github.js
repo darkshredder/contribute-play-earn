@@ -117,7 +117,7 @@ class Github extends Component {
 
     let form_data = new FormData();
     form_data.append("url", url);
-    form_data.append("pr_by", this.state.githubId);
+    form_data.append("pr_by", this.state.user.login);
 
     console.log(this.state.githubId, url);
 

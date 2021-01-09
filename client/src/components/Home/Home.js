@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import Button from "@material-ui/core/Button";
 
 export default class Home extends Component {
   render() {
@@ -7,7 +8,7 @@ export default class Home extends Component {
       <div>
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
           <a class="navbar-brand" href="#">
-            Navbar
+            Contribute Play Earn
           </a>
           <button
             class="navbar-toggler"
@@ -24,24 +25,23 @@ export default class Home extends Component {
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
               <li class="nav-item active">
-                <a class="nav-link" href="#">
-                  Home <span class="sr-only">(current)</span>
+                <a
+                  class="nav-link"
+                  href="https://github.com/login/oauth/authorize?scope=repo,user:email&client_id=4c3a4a4089509b332cb6"
+                >
+                  <Button variant="contained" color="primary">
+                    Github PR Collect
+                  </Button>
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
-                  Game
-                </a>
+                <Link class="nav-link" to="/game">
+                <Button variant="contained" color="secondary">
+                    Game Collect
+                  </Button>
+                </Link>
               </li>
             </ul>
-            <li class="nav-item">
-              <a
-                class="nav-link"
-                href="https://github.com/login/oauth/authorize?scope=repo,user:email&client_id=4c3a4a4089509b332cb6"
-              >
-                Github
-              </a>
-            </li>
           </div>
         </nav>
       </div>

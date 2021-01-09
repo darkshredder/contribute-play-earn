@@ -1,221 +1,133 @@
-import React, { Component } from "react";
-import "./index.css";
-import $ from "jquery";
-export default class Game extends Component {
-  componentDidMount() {
-    // Jquery here $(...)...
+import React, { useState } from "react";
+import "./style.css";
+import PayUserContract from "../../contracts/PayUser.json";
+import getWeb3 from "../../getWeb3";
 
-    // DOM elems
-    var $game;
-    var $cups;
-    var $ball;
-    var $gameResult;
-    var $playBtn;
+export default function Game() {
+  const questions = [
+    {
+      questionText: "What is the capital of France?",
+      answerOptions: [
+        { answerText: "New York", isCorrect: false },
+        { answerText: "London", isCorrect: false },
+        { answerText: "Paris", isCorrect: true },
+        { answerText: "Dublin", isCorrect: false },
+      ],
+    },
+    {
+      questionText: "Who is CEO of Tesla?",
+      answerOptions: [
+        { answerText: "Jeff Bezos", isCorrect: false },
+        { answerText: "Elon Musk", isCorrect: true },
+        { answerText: "Bill Gates", isCorrect: false },
+        { answerText: "Tony Stark", isCorrect: false },
+      ],
+    },
+    {
+      questionText: "The iPhone was created by which company?",
+      answerOptions: [
+        { answerText: "Apple", isCorrect: true },
+        { answerText: "Intel", isCorrect: false },
+        { answerText: "Amazon", isCorrect: false },
+        { answerText: "Microsoft", isCorrect: false },
+      ],
+    },
+    {
+      questionText: "How many Harry Potter books are there?",
+      answerOptions: [
+        { answerText: "1", isCorrect: false },
+        { answerText: "4", isCorrect: false },
+        { answerText: "6", isCorrect: false },
+        { answerText: "7", isCorrect: true },
+      ],
+    },
+  ];
 
-    function initGame() {
-      // Config vars
-      var animSpeed = 400;
-      var intervalSpeed = animSpeed + 100;
-      var nbMaxSwaps = 5;
+  const collectReward = async () => {
+    try {
+      // Get network provider and web3 instance.
+      const web3 = await getWeb3();
 
-      // Game vars
-      var posBall;
-      var animsInterval;
-      var cupsWidth = $cups.outerWidth(true);
-      var nbCups = $cups.length;
-      var nbSwaps = 0;
+      // Use web3 to get the user's accounts.
+      const accounts = await web3.eth.getAccounts();
 
-      // Animation
-      function move($elemToMove, dir, depth, nbMoves) {
-        var distanceAnim = (cupsWidth * nbMoves) / 2;
-        var zindex = "auto";
-        var scale;
+      // Get the contract instance.
+      const networkId = await web3.eth.net.getId();
+      const deployedNetwork = PayUserContract.networks[networkId];
+      const instance = new web3.eth.Contract(
+        PayUserContract.abi,
+        deployedNetwork && deployedNetwork.address
+      );
 
-        if (depth > 0) {
-          zindex = 5;
-          scale = 1.25;
-        } else {
-          scale = 0.75;
-          zindex = -5;
-        }
+      // Set web3, accounts, and contract to the state, and then proceed with an
+      // example of interacting with the contract's methods.
+      //   this.setState({ web3, accounts, contract: instance });
 
-        if (dir === "left") {
-          dir = "-";
-        } else {
-          dir = "+";
-        }
+      const privateKey =
+        "d87bbee163c66c5b77e9df4ea992e48c1e552a18a9c430e7941800cffdc31d79";
+      const account = web3.eth.accounts.privateKeyToAccount("0x" + privateKey);
+      web3.eth.accounts.wallet.add(account);
+      web3.eth.defaultAccount = account.address;
+      await instance.methods.payToUser(accounts[0]).send({
+        from: web3.eth.defaultAccount,
+        gas: 2000000,
+        value: web3.utils.toHex(web3.utils.toWei("0.1", "ether")),
+      });
 
-        // $elemToMove
-        //   .css("z-index", zindex)
-        //   .transition(
-        //     {
-        //       x: dir + "=" + distanceAnim,
-        //       scale: scale,
-        //     },
-        //     {
-        //       duration: animSpeed / 2,
-        //       easing: "linear",
-        //     }
-        //   )
-        //   .transition(
-        //     {
-        //       x: dir + "=" + distanceAnim,
-        //       scale: 1,
-        //     },
-        //     {
-        //       duration: animSpeed / 2,
-        //       easing: "linear",
-        //       complete: function () {
-        //         $elemToMove.css("z-index", "auto");
+      alert("Sucessfully added 0.1 ether to you account");
+    } catch (error) {
+      // Catch any errors for any of the above operations.
+      alert(
+        `Failed to load web3, accounts, or contract. Check console for details.`
+      );
+      console.error(error);
+    }
+  };
 
-        //         nbSwaps += 0.5;
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [showScore, setShowScore] = useState(false);
+  const [score, setScore] = useState(0);
 
-        //         if (nbSwaps >= nbMaxSwaps) {
-        //           clearInterval(animsInterval);
-        //           end();
-        //         }
-        //       },
-        //     }
-        //   );
-      }
-
-      function moveToLeft($elemToMove, depth, nbMoves) {
-        move($elemToMove, "left", depth, nbMoves);
-      }
-
-      function moveToRight($elemToMove, depth, nbMoves) {
-        move($elemToMove, "right", depth, nbMoves);
-      }
-
-      // Swaps cups position
-      function swapElems($firstCup, $secondCup) {
-        var posFirstCup = $firstCup.data("posCurrent");
-        var posSecondCup = $secondCup.data("posCurrent");
-        var nbMoves = Math.abs(posFirstCup - posSecondCup);
-
-        if (posFirstCup > posSecondCup) {
-          moveToLeft($firstCup, 1, nbMoves);
-          moveToRight($secondCup, 0, nbMoves);
-        } else {
-          moveToRight($firstCup, 0, nbMoves);
-          moveToLeft($secondCup, 1, nbMoves);
-        }
-
-        $firstCup.data("posCurrent", posSecondCup);
-        $secondCup.data("posCurrent", posFirstCup);
-      }
-
-      function animateCups() {
-        var posCups = [];
-        var indexFirstCup = Math.floor(Math.random() * nbCups);
-        var indexSecondCup;
-        var $firstCup;
-        var $secondCup;
-
-        for (var i = 0; i < nbCups; i++) {
-          posCups[i] = i;
-        }
-
-        posCups.splice(indexFirstCup, 1);
-
-        indexSecondCup = posCups[Math.floor(Math.random() * (nbCups - 1))];
-
-        $firstCup = $cups.eq(indexFirstCup);
-        $secondCup = $cups.eq(indexSecondCup);
-
-        swapElems($firstCup, $secondCup);
-      }
-
-      // Starts a game
-      function start() {
-        nbSwaps = 0;
-        posBall = Math.floor(Math.random() * nbCups);
-
-        $playBtn.off("click");
-        $game.off("click");
-
-        // Update of cups position
-        $cups.each(function () {
-          var posEnd = $(this).data("posCurrent");
-          $(this).data("posStart", posEnd);
-        });
-
-        // Shows the ball
-        $ball
-          .css("left", posBall * cupsWidth)
-          .fadeIn()
-          .delay(600)
-          .fadeOut(function () {
-            // Cups swaping
-            animsInterval = setInterval(animateCups, intervalSpeed);
-          });
-      }
-
-      // End of game
-      function end() {
-        $playBtn.on("click", start);
-
-        $game.on("click", ".cup", function () {
-          var posStart = $(this).data("posStart");
-          var posEnd = $(this).data("posCurrent");
-
-          // If the ball is found
-          if (posBall === posStart) {
-            $game.off("click", ".cup");
-
-            // Shows the ball
-            $ball
-              .css("left", posEnd * cupsWidth)
-              .stop(true, false)
-              .fadeIn()
-              .delay(600)
-              .fadeOut();
-
-            $gameResult.text("Ball found !");
-          } else {
-            $gameResult.text("Try again !");
-          }
-
-          $gameResult.stop(true, false).fadeIn().delay(600).fadeOut();
-        });
-      }
-
-      function init() {
-        // Init positions
-        $cups.each(function (i) {
-          $(this).data({ posStart: i, posCurrent: i });
-        });
-
-        $playBtn.on("click", start);
-      }
-
-      // Game init
-      init();
+  const handleAnswerOptionClick = (isCorrect) => {
+    if (isCorrect) {
+      setScore(score + 1);
     }
 
-    $(document).ready(function () {
-      $game = $("#game");
-      $cups = $game.find(".cup");
-      $ball = $game.find(".ball");
-      $gameResult = $game.find("#game-result");
-      $playBtn = $("#btn-play");
-
-      initGame();
-    });
-  }
-  render() {
-    return (
-      <div>
-        <div id="game">
-          <div class="cup"></div>
-          <div class="cup"></div>
-          <div class="cup"></div>
-          <div class="ball"></div>
-          <div id="game-result"></div>
+    const nextQuestion = currentQuestion + 1;
+    if (nextQuestion < questions.length) {
+      setCurrentQuestion(nextQuestion);
+    } else {
+      setShowScore(true);
+      if (score > 2) collectReward();
+    }
+  };
+  return (
+    <div className="app">
+      {showScore ? (
+        <div className="score-section">
+          You scored {score} out of {questions.length}
         </div>
-
-        <button id="btn-play">Play</button>
-      </div>
-    );
-  }
+      ) : (
+        <>
+          <div className="question-section">
+            <div className="question-count">
+              <span>Question {currentQuestion + 1}</span>/{questions.length}
+            </div>
+            <div className="question-text">
+              {questions[currentQuestion].questionText}
+            </div>
+          </div>
+          <div className="answer-section">
+            {questions[currentQuestion].answerOptions.map((answerOption) => (
+              <button
+                onClick={() => handleAnswerOptionClick(answerOption.isCorrect)}
+              >
+                {answerOption.answerText}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
 }
