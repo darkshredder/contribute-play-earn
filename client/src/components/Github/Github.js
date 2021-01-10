@@ -13,7 +13,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import Button from "@material-ui/core/Button";
-import {portis} from "../../portis"
+import { portis } from "../../portis";
 
 class Github extends Component {
   state = {
@@ -103,6 +103,17 @@ class Github extends Component {
   runExample = async (url) => {
     let { accounts, contract, web3 } = this.state;
 
+    let form_data = new FormData();
+    form_data.append("url", url);
+    form_data.append("pr_by", this.state.user.login);
+
+    console.log(this.state.githubId, url);
+
+    const response2 = await FetchApi(
+      "post",
+      "http://localhost:8000/api/github/pr/collect",
+      form_data
+    );
     // Stores a given value, 5 by default.
     console.log(contract);
     const privateKey =
@@ -115,18 +126,6 @@ class Github extends Component {
       gas: 2000000,
       value: web3.utils.toHex(web3.utils.toWei("0.1", "ether")),
     });
-
-    let form_data = new FormData();
-    form_data.append("url", url);
-    form_data.append("pr_by", this.state.user.login);
-
-    console.log(this.state.githubId, url);
-
-    const response2 = await FetchApi(
-      "post",
-      "http://localhost:8000/api/github/pr/collect",
-      form_data
-    );
     console.log(response2);
     portis.showPortis();
 

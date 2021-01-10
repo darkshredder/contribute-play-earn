@@ -43,5 +43,8 @@ class GithubPRAPI(APIView):
             profile = GithubUser.objects.filter(username=request.data['pr_by'])
             if (not profile):
                 return Response({"error": "wrong data entered"}, status=status.HTTP_401_UNAUTHORIZED)
+            checkAlreadyExists = CollectedPR.objects.filter(url=request.data['url'], pr_by=profile[0])
+            if (checkAlreadyExists):
+                return Response({"error": "Already Exists"}, status=status.HTTP_401_UNAUTHORIZED)
             CollectedPR(url=request.data['url'],pr_by=profile[0]).save()
             return Response({"status":"added url"}, status=status.HTTP_200_OK)
