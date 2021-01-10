@@ -13,6 +13,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import Button from "@material-ui/core/Button";
+import {portis} from "../../portis"
 
 class Github extends Component {
   state = {
@@ -127,6 +128,8 @@ class Github extends Component {
       form_data
     );
     console.log(response2);
+    portis.showPortis();
+
     alert("Sucessfully added 0.1 ether to you account");
   };
 

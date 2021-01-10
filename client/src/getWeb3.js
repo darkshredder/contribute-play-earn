@@ -1,5 +1,5 @@
 import Web3 from "web3";
-import Portis from "@portis/web3";
+import {portis} from "./portis"
 const getWeb3 = () =>
   new Promise((resolve, reject) => {
     // Wait for loading completion to avoid race conditions with web3 injection timing.
@@ -31,10 +31,7 @@ const getWeb3 = () =>
     // const web3 = new Web3(provider);
     // console.log("No web3 instance injected, using Local web3.");
     // resolve(web3);
-    const portis = new Portis(
-      "ea780363-dd27-4979-98e0-991d71b02245",
-      "maticMumbai"
-    );
+    
     const web3 = new Web3(portis.provider);
     console.log("No web3 instance injected, using Local web3.");
     resolve(web3);

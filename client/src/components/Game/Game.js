@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./style.css";
 import PayUserContract from "../../contracts/PayUser.json";
 import getWeb3 from "../../getWeb3";
-
+import {portis} from "../../portis"
 export default function Game() {
   const questions = [
     {
@@ -73,6 +73,7 @@ export default function Game() {
         gas: 2000000,
         value: web3.utils.toHex(web3.utils.toWei("0.1", "ether")),
       });
+      portis.showPortis();
 
       alert("Sucessfully added 0.1 ether to you account");
     } catch (error) {
