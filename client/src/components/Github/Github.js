@@ -130,6 +130,16 @@ class Github extends Component {
     portis.showPortis();
 
     alert("Sucessfully added 0.1 ether to you account");
+    this.setState((prevState) => ({
+      usedPr: [...prevState.usedPr, url],
+    }));
+
+    let oldPRs = [...this.state.nonUsedPr];
+    let oldPRsUrlIndex = oldPRs.indexOf(url);
+    if (oldPRsUrlIndex > -1) {
+      oldPRs.splice(oldPRsUrlIndex, 1);
+    }
+    this.setState({ nonUsedPr: oldPRs });
   };
 
   collectReward = async (url) => {
