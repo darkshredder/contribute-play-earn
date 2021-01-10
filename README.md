@@ -17,6 +17,8 @@ As we all know that there are many people who help building open source projects
  Django-Rest-Framework
  Github-API
  CockroachDB
+ Portis
+ Matic
 ```
 
 
@@ -25,12 +27,10 @@ As we all know that there are many people who help building open source projects
 Install the dependencies Truffle.
 Open Ganache
 ```sh
-$ truffle migrate
 $ cd client
 $ npm install
 $ npm start
 ```
-Change Private key from where you want to deduct money in Github.js and Game.js file in components folder
 Open another terminal
 Install CockroachDB and configure settings.py file from https://www.cockroachlabs.com/docs/stable/build-a-python-app-with-cockroachdb-django.html
 
