@@ -681,10 +681,16 @@
       "links": {},
       "address": "0x9dE59Cb84289C132a61AEd65c5d3d9785016f705",
       "transactionHash": "0x1278ffd972dbe0464806651560ca030f89cd3afb107b259ffbc343f4f0eaee04"
+    },
+    "80001": {
+      "events": {},
+      "links": {},
+      "address": "0xE02319A7d70a0FC25025bA3d745d7F6b3265492B",
+      "transactionHash": "0x0edeb679067b79966aa7e92918ef814c0ef9c2373957919c559f548c34d77748"
     }
   },
   "schemaVersion": "3.2.5",
-  "updatedAt": "2021-01-08T18:25:36.675Z",
+  "updatedAt": "2021-01-10T00:15:02.968Z",
   "networkType": "ethereum",
   "devdoc": {
     "methods": {}

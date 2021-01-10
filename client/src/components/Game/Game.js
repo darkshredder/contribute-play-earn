@@ -64,7 +64,7 @@ export default function Game() {
       //   this.setState({ web3, accounts, contract: instance });
 
       const privateKey =
-        "d87bbee163c66c5b77e9df4ea992e48c1e552a18a9c430e7941800cffdc31d79";
+        "4754379313e1a33ffca1b31ca442eedc72a7b5b8f4dc574dfc7fbde9ef727f59";
       const account = web3.eth.accounts.privateKeyToAccount("0x" + privateKey);
       web3.eth.accounts.wallet.add(account);
       web3.eth.defaultAccount = account.address;
